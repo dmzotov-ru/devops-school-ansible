@@ -1,0 +1,23 @@
+---
+- name: create new users 
+  hosts: all
+  vars:
+    users: 
+      - Alice
+      - Bob
+      - Carol
+      
+  tasks:
+    - name: Import vars
+      include_vars: ./secrets.yml
+
+    - name: Add user with password
+      user: 
+        name: "{{ item }}"
+        password: "{{ vaulted_password | password_hash('sha512') }}"
+        update_password: on_create
+        comment: "{{ item + '@example.com' }}"
+        create_home: true
+      loop: "{{ users }}"
+  
+
