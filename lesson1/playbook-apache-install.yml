@@ -1,0 +1,40 @@
+---
+- name: Deploy standard web server based on Apache
+  hosts: school
+  vars:
+    text: "Welcome to my web server"
+    path: "/var/www/html"
+
+  tasks:
+    - name: Install apache
+      package:
+        name: httpd
+        state: present
+
+    - name: Enable and start httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Copy index.html
+      template:
+        src: "templates{{ path }}/index.html.j2"
+        dest: "{{ path }}/index.html"
+        mode: 0400
+        owner: apache
+        group: apache
+      notify: Restart httpd service
+        
+    - name: Permit traffic for httpd service
+      ansible.posix.firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+
+  handlers:
+    - name: Restart httpd service
+      service:
+        name: httpd
+        state: restarted
+        

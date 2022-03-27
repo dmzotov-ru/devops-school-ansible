@@ -1,0 +1,23 @@
+---
+  - name: Uninstall Apache for default web-server
+    hosts: school
+    gather_facts: true
+    vars:
+      path: "/var/www/html"
+
+    tasks:
+      - name: Remove httpd package
+        package:
+          name: httpd
+          state: absent
+
+      - name: Delete index.html
+        file: 
+          path: "{{ path }}/index.html"
+          state: absent
+
+      - name: Decline traffic for httpd service
+        ansible.posix.firewalld:
+          service: http
+          permanent: yes
+          state: disabled

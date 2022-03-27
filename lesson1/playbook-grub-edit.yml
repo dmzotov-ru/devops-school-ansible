@@ -1,0 +1,18 @@
+---
+- name: Edit file with grub config
+  hosts: school
+
+  tasks:
+    - name: Edit grub config
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX="(.*)"S'
+        line: "GRUB_CMDLINE_LINUX=\"net.ifnames=0 biosdevname=0\""
+        backup: yes
+        backrefs: yes
+
+      notify: Write grub configuration file
+
+  handlers:
+    - name: Write grub configuration file
+      command: grub2-mkconfig -o /boot/grub2/grub.cfg
