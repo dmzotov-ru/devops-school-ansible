@@ -1,0 +1,4 @@
+---
+# vars file for deploy-web-server
+text: "Welcome to my web server"
+path: "/var/www/html"

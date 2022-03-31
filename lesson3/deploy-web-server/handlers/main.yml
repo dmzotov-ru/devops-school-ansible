@@ -1,0 +1,6 @@
+---
+# handlers file for deploy-web-server
+- name: Restart httpd service
+  service:
+    name: httpd
+    state: restarted

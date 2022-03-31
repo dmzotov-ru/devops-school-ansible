@@ -1,0 +1,35 @@
+---
+# tasks file for deploy-web-server
+- name: "Check for supported distribution"
+  fail:
+    msg: "Distribution {{ ansible_distribution + '-' + ansible_distribution_release }} is not supported yet."
+  when: ansible_facts['os_family'] not in ["RedHat", "AlmaLinux"]
+
+- name: Install apache
+  package:
+    name: httpd
+    state: present
+
+- name: Copy index.html
+  template:
+    src: "./index.html.j2"
+    dest: "{{ path }}/index.html"
+    mode: 0400
+    owner: apache
+    group: apache
+  notify: Restart httpd service
+
+- name: Permit traffic for httpd service
+  ansible.posix.firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+
+- name: Run handlers
+  meta: flush_handlers
+  
+- name: Enable and start httpd service
+  service:
+    name: httpd
+    state: started
+    enabled: true
