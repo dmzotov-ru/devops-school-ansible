@@ -1,6 +1,6 @@
 ---
 - name: create new users 
-  hosts: all
+  hosts: school
   vars:
     users: 
       - Alice

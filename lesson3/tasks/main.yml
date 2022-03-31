@@ -1,0 +1,47 @@
+---
+# tasks file for deploy-vsftpd
+  - name: Install vsftpd
+    package:
+      name: vsftpd
+      state: present
+
+  - name: Allow full read/write access through SELinux
+    ansible.posix.seboolean:
+      name: ftpd_full_access
+        state: yes
+        persistent: yes
+    when:
+      - ansible_distribution_major_version >= "7"
+
+  - name: Permit traffic fpr vsftp service
+    ansible.posix.firewalld:
+      service: ftp
+      permanent: yes
+      state: enabled
+
+  - name: Create main folder
+    file:
+      path: "{{ anon_path }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+      setype: public_content_rw_t
+      seuser: system_u
+
+  - name: Create upload folder
+    file:
+      path: "{{ upload_path }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 0777
+      setype: public_content_rw_t
+      seuser: system_u
+      
+  - name: Copy final config
+    template:
+      src: "templates/vsftpd.conf.j2"
+      dest: "/etc/vsftpd/vsftpd.conf"
+      mode: 0400
+    notify: Restart vsftpd service

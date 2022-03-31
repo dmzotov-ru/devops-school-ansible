@@ -1,0 +1,12 @@
+---
+# vars file for deploy-vsftpd
+upload_path: /var/ftp/pub/upload
+anon_path: /var/ftp/pub
+anonymous_enable: "YES"
+local_enable: "YES"
+write_enable: "YES"
+anon_upload_enable: "YES"
+anon_mkdir_write_enable: "YES"
+listen_ipv6: "NO"
+listen: "YES"
+anon_root: "anon_root=/var/ftp"

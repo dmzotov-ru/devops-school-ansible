@@ -1,0 +1,6 @@
+---
+# handlers file for deploy-vsftpd
+- name: Restart vsftpd service
+  service:
+    name: vsftpd
+    state: restarted
